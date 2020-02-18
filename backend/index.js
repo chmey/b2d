@@ -1,7 +1,7 @@
 const WebSocket = require('ws');
 const Influx = require('influx');
 const os = require('os');
-
+const http = require('http');
 
 const influx = new Influx.InfluxDB({
   host: 'localhost',
@@ -32,7 +32,6 @@ influx.writePoints([
   {
     measurement: 'b2dping',
     tags: { host: os.hostname() },
-    // fields: { duration, path: req.path },
     fields: { tool_bd_addr: "some:tool", receiver_bd_addr: "some:path", signal_strength: 100 },
   }
 ]).then(() => {
@@ -47,16 +46,23 @@ influx.writePoints([
 });
 
 
-
-const wss = new WebSocket.Server({ port: 8081 });
+const server = http.createServer();
+const wss = new WebSocket.Server({server: server})
 
 wss.on('connection', function connection(ws) {
+  console.log("New connection...");
   ws.on('message', function incoming(message) {
-    console.log('received: %s', message);
+    console.log('received:', message);
   });
 
-  ws.send('something');
+  ws.on("close", function() {
+   console.log("Closing...");
+ });
+
+  // ws.send('something');
 });
+
+server.listen(8081);
 
 
 
