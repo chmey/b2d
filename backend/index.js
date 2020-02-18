@@ -28,56 +28,29 @@ influx.createDatabase('b2dth_db');
 
 // SELECT signal_strength FROM b2dping WHERE receiver_bd_addr='XXX' AND time >= 'XXX' AND time <= 'XXX'
 
-influx.writePoints([
-  {
-    measurement: 'b2dping',
-    tags: { host: os.hostname() },
-    // fields: { duration, path: req.path },
-    fields: { tool_bd_addr: "some:tool", receiver_bd_addr: "some:path", signal_strength: 100 },
-  }
-]).then(() => {
-  return influx.query(`
-    select * from b2dping
-    where host = ${Influx.escape.stringLit(os.hostname())}
-    order by time desc
-    limit 10
-  `)
-}).then(rows => {
-  rows.forEach(row => console.log(`A request to ${row.tool_bd_addr} has a signal strength of ${row.signal_strength}`))
-});
-
-
-
 const wss = new WebSocket.Server({ port: 8081 });
 
 wss.on('connection', function connection(ws) {
   ws.on('message', function incoming(message) {
     console.log('received: %s', message);
+    let data = JSON.parse(message);
+    influx.writePoints([
+      {
+        measurement: 'b2dping',
+        tags: { host: os.hostname() },
+        fields: { tool_bd_addr: data.tool_bd_addr, receiver_bd_addr: "some:addr", signal_strength: data.rssi },
+      }
+    ]).then(_ => {
+      influx.query(`
+          select * from b2dping
+          where host = ${Influx.escape.stringLit(os.hostname())}
+          order by time desc
+          limit 10
+        `).then(rows => {
+        rows.forEach(row => console.log(`A request to ${row.tool_bd_addr} has a signal strength of ${row.signal_strength}`))
+      });
+    });
   });
 
   ws.send('something');
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
