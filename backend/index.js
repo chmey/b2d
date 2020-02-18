@@ -13,18 +13,12 @@ const influx = new Influx.InfluxDB({
    {
      measurement: 'b2dping',
      fields: {
-       // tool_bd_addr: Influx.FieldType.STRING,
-       receiver_bd_addr: Influx.FieldType.STRING,
-       uuid: Influx.FieldType.STRING,
-       major: Influx.FieldType.INTEGER,
-       minor: Influx.FieldType.INTEGER,
-       signal_strength: Influx.FieldType.INTEGER,
+       rssi: Influx.FieldType.INTEGER,
      },
      tags: [
        'host',
-       'tool_bd_addr',
-       'major',
-       'minor',
+       'tool_id',
+       'recv_bd_addr'
      ]
    }
   ]
@@ -44,8 +38,8 @@ wss.on('connection', function connection(ws) {
       {
         measurement: 'b2dping',
         time: +new Date,
-        tags: { host: os.hostname(), tool_bd_addr: data.tool_bd_addr, major: data.details.major, minor: data.details.minor },
-        fields: {uuid: data.details.uuid, receiver_bd_addr: data.receiver_bd_addr, signal_strength: data.rssi },
+        tags: { host: os.hostname(), tool_id: data.tool_id, recv_bd_addr: data.recv_bd_addr },
+        fields: {rssi: data.rssi },
       }
     ]).then(_ => {
       influx.query(`SELECT mean("signal_strength") FROM "b2dping" WHERE ("host" = 'L480') GROUP BY "major", "minor"`).then(rows => {
