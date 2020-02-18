@@ -8,7 +8,7 @@ function trilat([s1, s2, s3]) {
           / (2 * n2.right);
   var y = ((s1 * s1) - (s3 * s3)
           + (n3.right * n3.right)
-          * (n3.top * n3.top)
+          + (n3.top * n3.top)
           - 2 * n3.right * x)
           / (2 * n3.top)
 
