@@ -5,12 +5,14 @@ const express = require('express');
 
 const app = express();
 
-// app.use(express.static(__dirname + '/script.js'));
 app.use(express.static(__dirname));
 app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
+app.get('/getToolPos', (req, res) => res.json(getPos(req.query.toolId)));
 
-// app.get('/pos', (req, res) => )
-
+function getPos(toolId) {
+  console.log("getPos of", toolId);
+  return {x: 0.5, y: 0.3};
+}
 
 const influx = new Influx.InfluxDB({
   host: 'localhost',
