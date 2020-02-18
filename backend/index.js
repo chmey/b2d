@@ -1,6 +1,5 @@
 const WebSocket = require('ws');
 const Influx = require('influx');
-const os = require('os');
 const http = require('http');
 
 const influx = new Influx.InfluxDB({
@@ -16,7 +15,6 @@ const influx = new Influx.InfluxDB({
        rssi: Influx.FieldType.INTEGER,
      },
      tags: [
-       'host',
        'tool_id',
        'recv_bd_addr'
      ]
@@ -41,7 +39,7 @@ wss.on('connection', function connection(ws) {
       {
         measurement: 'b2dping',
         time: +new Date,
-        tags: { host: os.hostname(), tool_id: data.tool_id, recv_bd_addr: data.recv_bd_addr },
+        tags: { tool_id: data.tool_id, recv_bd_addr: data.recv_bd_addr },
         fields: {rssi: data.rssi },
       }
     ]).then(_ => {
@@ -62,27 +60,3 @@ wss.on('connection', function connection(ws) {
 });
 
 server.listen(8081);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
