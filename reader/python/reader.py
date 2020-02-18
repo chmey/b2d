@@ -24,5 +24,5 @@ def callback(bt_addr, rssi, packet, additional_info):
 
 scanner = BeaconScanner(callback, device_filter=IBeaconFilter(uuid="b2ddeadb-eef0-0000-0000-000000000000"))
 scanner.start()
-time.sleep(60)
+time.sleep(600)
 scanner.stop()
