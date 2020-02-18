@@ -13,12 +13,12 @@ const influx = new Influx.InfluxDB({
    {
      measurement: 'b2dping',
      fields: {
-       tool_bd_addr: Influx.FieldType.STRING,
-       receiver_bd_addr: Influx.FieldType.STRING,
-       signal_strength: Influx.FieldType.INTEGER
+       rssi: Influx.FieldType.INTEGER,
      },
      tags: [
-       'host'
+       'host',
+       'tool_id',
+       'recv_bd_addr'
      ]
    }
   ]
@@ -28,24 +28,6 @@ influx.createDatabase('b2dth_db');
 
 // SELECT signal_strength FROM b2dping WHERE receiver_bd_addr='XXX' AND time >= 'XXX' AND time <= 'XXX'
 
-influx.writePoints([
-  {
-    measurement: 'b2dping',
-    tags: { host: os.hostname() },
-    fields: { tool_bd_addr: "some:tool", receiver_bd_addr: "some:path", signal_strength: 100 },
-  }
-]).then(() => {
-  return influx.query(`
-    select * from b2dping
-    where host = ${Influx.escape.stringLit(os.hostname())}
-    order by time desc
-    limit 10
-  `)
-}).then(rows => {
-  rows.forEach(row => console.log(`A request to ${row.tool_bd_addr} has a signal strength of ${row.signal_strength}`))
-});
-
-
 const server = http.createServer();
 const wss = new WebSocket.Server({server: server})
 
@@ -53,6 +35,23 @@ wss.on('connection', function connection(ws) {
   console.log("New connection...");
   ws.on('message', function incoming(message) {
     console.log('received:', message);
+
+    let data = JSON.parse(message);
+    influx.writePoints([
+      {
+        measurement: 'b2dping',
+        time: +new Date,
+        tags: { host: os.hostname(), tool_id: data.tool_id, recv_bd_addr: data.recv_bd_addr },
+        fields: {rssi: data.rssi },
+      }
+    ]).then(_ => {
+      influx.query(`SELECT mean("signal_strength") FROM "b2dping" WHERE ("host" = 'L480') GROUP BY "major", "minor"`).then(rows => {
+      //     // rows are unique tool_bd_addr
+      rows.forEach(row => console.log(row))
+          // rows.forEach(row => console.log(`TOOL: ${row.tool_bd_addr} ${row.mean} avg`))
+        // rows.forEach(row => console.log(`${row.uuid} ${row.major}:${row.minor} - tool ${row.tool_bd_addr} to receiver ${row.receiver_bd_addr} has a signal strength of ${row.signal_strength}`))
+      });
+    });
   });
 
   ws.on("close", function() {
