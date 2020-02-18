@@ -18,7 +18,7 @@ async def post(output):
 
 def callback(bt_addr, rssi, packet, additional_info):
     print(f"sending RSSI: {rssi}")
-    output = json.dumps({'tool_bd_addr': bt_addr, 'receiver_bd_addr': bluetooth.read_local_bdaddr(), 'details': additional_info, 'rssi': rssi})
+    output = json.dumps({'tool_id': f"{additional_info['major']}.{additional_info['minor']}", 'recv_bd_addr': bluetooth.read_local_bdaddr(), 'rssi': rssi})
     asyncio.run(post(output))
 
 
