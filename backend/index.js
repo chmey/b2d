@@ -15,7 +15,10 @@ const influx = new Influx.InfluxDB({
      fields: {
        tool_bd_addr: Influx.FieldType.STRING,
        receiver_bd_addr: Influx.FieldType.STRING,
-       signal_strength: Influx.FieldType.INTEGER
+       uuid: Influx.FieldType.STRING,
+       major: Influx.FieldType.INTEGER,
+       minor: Influx.FieldType.INTEGER,
+       signal_strength: Influx.FieldType.INTEGER,
      },
      tags: [
        'host'
@@ -32,13 +35,13 @@ const wss = new WebSocket.Server({ port: 8081 });
 
 wss.on('connection', function connection(ws) {
   ws.on('message', function incoming(message) {
-    console.log('received: %s', message);
+    // console.log('received: %s', message);
     let data = JSON.parse(message);
     influx.writePoints([
       {
         measurement: 'b2dping',
         tags: { host: os.hostname() },
-        fields: { tool_bd_addr: data.tool_bd_addr, receiver_bd_addr: "some:addr", signal_strength: data.rssi },
+        fields: { uuid: data.details.uuid, major: data.details.major, minor: data.details.minor, tool_bd_addr: data.tool_bd_addr, receiver_bd_addr: data.receiver_bd_addr, signal_strength: data.rssi },
       }
     ]).then(_ => {
       influx.query(`
@@ -47,7 +50,7 @@ wss.on('connection', function connection(ws) {
           order by time desc
           limit 10
         `).then(rows => {
-        rows.forEach(row => console.log(`A request to ${row.tool_bd_addr} has a signal strength of ${row.signal_strength}`))
+        rows.forEach(row => console.log(`${row.uuid} ${row.major}:${row.minor} - tool ${row.tool_bd_addr} to receiver ${row.receiver_bd_addr} has a signal strength of ${row.signal_strength}`))
       });
     });
   });
