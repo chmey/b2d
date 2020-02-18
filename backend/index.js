@@ -13,15 +13,12 @@ const influx = new Influx.InfluxDB({
    {
      measurement: 'b2dping',
      fields: {
-       tool_bd_addr: Influx.FieldType.STRING,
-       receiver_bd_addr: Influx.FieldType.STRING,
-       uuid: Influx.FieldType.STRING,
-       major: Influx.FieldType.INTEGER,
-       minor: Influx.FieldType.INTEGER,
-       signal_strength: Influx.FieldType.INTEGER,
+       rssi: Influx.FieldType.INTEGER,
      },
      tags: [
-       'host'
+       'host',
+       'tool_id',
+       'recv_bd_addr'
      ]
    }
   ]
@@ -40,17 +37,16 @@ wss.on('connection', function connection(ws) {
     influx.writePoints([
       {
         measurement: 'b2dping',
-        tags: { host: os.hostname() },
-        fields: { uuid: data.details.uuid, major: data.details.major, minor: data.details.minor, tool_bd_addr: data.tool_bd_addr, receiver_bd_addr: data.receiver_bd_addr, signal_strength: data.rssi },
+        time: +new Date,
+        tags: { host: os.hostname(), tool_id: data.tool_id, recv_bd_addr: data.recv_bd_addr },
+        fields: {rssi: data.rssi },
       }
     ]).then(_ => {
-      influx.query(`
-          select * from b2dping
-          where host = ${Influx.escape.stringLit(os.hostname())}
-          order by time desc
-          limit 10
-        `).then(rows => {
-        rows.forEach(row => console.log(`${row.uuid} ${row.major}:${row.minor} - tool ${row.tool_bd_addr} to receiver ${row.receiver_bd_addr} has a signal strength of ${row.signal_strength}`))
+      influx.query(`SELECT mean("signal_strength") FROM "b2dping" WHERE ("host" = 'L480') GROUP BY "major", "minor"`).then(rows => {
+      //     // rows are unique tool_bd_addr
+      rows.forEach(row => console.log(row))
+          // rows.forEach(row => console.log(`TOOL: ${row.tool_bd_addr} ${row.mean} avg`))
+        // rows.forEach(row => console.log(`${row.uuid} ${row.major}:${row.minor} - tool ${row.tool_bd_addr} to receiver ${row.receiver_bd_addr} has a signal strength of ${row.signal_strength}`))
       });
     });
   });
