@@ -4,7 +4,7 @@ import json
 import websockets
 import asyncio
 
-SERVER = "10.222.68.173"
+SERVER = "localhost"
 PORT = 8081
 
 
@@ -16,7 +16,7 @@ async def post(output):
 
 
 def callback(bt_addr, rssi, packet, additional_info):
-    output = json.dumps({'bt_addr': bt_addr, 'uuid': additional_info['uuid'], 'major': additional_info['major'], 'minor': additional_info['minor'], 'rssi': rssi})
+    output = json.dumps({'tool_bd_addr': bt_addr, 'uuid': additional_info['uuid'], 'major': additional_info['major'], 'minor': additional_info['minor'], 'rssi': rssi})
     asyncio.run(post(output))
 
 
