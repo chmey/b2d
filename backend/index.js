@@ -22,7 +22,9 @@ const influx = new Influx.InfluxDB({
      },
      tags: [
        'host',
-       'tool_bd_addr'
+       'tool_bd_addr',
+       'major',
+       'minor',
      ]
    }
   ]
@@ -41,18 +43,15 @@ wss.on('connection', function connection(ws) {
     influx.writePoints([
       {
         measurement: 'b2dping',
-        tags: { host: os.hostname(), tool_bd_addr: data.tool_bd_addr},
-        fields: { uuid: data.details.uuid, major: data.details.major, minor: data.details.minor, receiver_bd_addr: data.receiver_bd_addr, signal_strength: data.rssi },
+        time: +new Date,
+        tags: { host: os.hostname(), tool_bd_addr: data.tool_bd_addr, major: data.details.major, minor: data.details.minor },
+        fields: {uuid: data.details.uuid, receiver_bd_addr: data.receiver_bd_addr, signal_strength: data.rssi },
       }
     ]).then(_ => {
-      influx.query(`
-            SELECT MEAN("signal_strength")
-            FROM b2dping
-            WHERE host = ${Influx.escape.stringLit(os.hostname())}
-            GROUP BY tool_bd_addr
-        `).then(rows => {
-          // rows are unique tool_bd_addr
-          rows.forEach(row => console.log(`TOOL: ${row.tool_bd_addr} - ${row.mean} avg`))
+      influx.query(`SELECT mean("signal_strength") FROM "b2dping" WHERE ("host" = 'L480') GROUP BY "major", "minor"`).then(rows => {
+      //     // rows are unique tool_bd_addr
+      rows.forEach(row => console.log(row))
+          // rows.forEach(row => console.log(`TOOL: ${row.tool_bd_addr} ${row.mean} avg`))
         // rows.forEach(row => console.log(`${row.uuid} ${row.major}:${row.minor} - tool ${row.tool_bd_addr} to receiver ${row.receiver_bd_addr} has a signal strength of ${row.signal_strength}`))
       });
     });
