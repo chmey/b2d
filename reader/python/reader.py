@@ -13,10 +13,11 @@ async def post(output):
     uri = f"ws://{SERVER}:{PORT}"
     async with websockets.connect(uri) as websocket:
         await websocket.send(output)
-        print(await websocket.recv())
+        # print(await websocket.recv())
 
 
 def callback(bt_addr, rssi, packet, additional_info):
+    print(f"sending RSSI: {rssi}")
     output = json.dumps({'tool_bd_addr': bt_addr, 'receiver_bd_addr': bluetooth.read_local_bdaddr(), 'details': additional_info, 'rssi': rssi})
     asyncio.run(post(output))
 
