@@ -4,11 +4,11 @@ var ctx = canvas.getContext("2d");
 const bh = canvas.height;
 const bw = canvas.width;
 
-const recvMargin = 80;
+const recvMargin = 100;
 const recvRadius = 20;
 const recvColor = "blue";
 
-const toolRadius = 12;
+const toolRadius = 15;
 const toolColor = 'orange';
 const toolTrack = [
                     // idle in middle
@@ -74,6 +74,8 @@ function drawDot(x, y, r, color) {
 async function update() {
   console.log("Update...");
   ctx.clearRect(0, 0, bw, bh);
+  img = document.getElementById('source');
+  ctx.drawImage(img, 0, 0, bw, bh);
 
   drawDot(recvMargin, recvMargin, recvRadius, recvColor);
   drawDot(recvMargin, bh-recvMargin, recvRadius, recvColor);
