@@ -59,6 +59,8 @@ function drawDot(x, y, r, color) {
 async function update() {
   console.log("Update...");
   ctx.clearRect(0, 0, bw, bh);
+  img = document.getElementById('source');
+  ctx.drawImage(img, 0, 0, bw, bh);
 
   drawDot(recvMargin, recvMargin, recvRadius, recvColor);
   drawDot(recvMargin, bh-recvMargin, recvRadius, recvColor);
