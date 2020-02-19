@@ -81,7 +81,7 @@ async function update() {
     let {x, y} = await (await fetch('/getToolPos?toolId=1.2')).json();
     console.log("await: ", x, y);
 
-    drawDot(bw*x + recvMargin, bh*y+recvMargin, toolRadius, toolColor);
+    drawDot((bw-recvMargin)*x + recvMargin, (bh-recvMargin)*y + recvMargin, toolRadius, toolColor);
   }
 }
 
