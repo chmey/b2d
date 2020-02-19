@@ -15,9 +15,7 @@ async function getPos(toolId) {
   rssis = rssis.map(x => x.median);
   let loc = trilateration.trilat(rssis);
 
-  // return loc;
-
-  return {x: 0, y: 1.5};
+  return loc;
 }
 
 const influx = new Influx.InfluxDB({
