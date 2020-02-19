@@ -38,13 +38,28 @@ const toolTrack = [
                     {x: 645, y: 270}, {x:620, y:250}, {x: 630, y: 240},
                     {x: 645, y: 250}, {x:625, y:245}, {x: 640, y: 240},
                     {x: 650, y: 235}, {x:645, y:225}, {x: 640, y: 230},
-
-
-
-
-
-
                   ]
+
+// <div>Icons made by
+//   <a href="https://www.flaticon.com/authors/pixel-perfect" title="Pixel perfect">
+//     Pixel perfect
+//   </a>
+//   from
+//   <a href="https://www.flaticon.com/" title="Flaticon">
+//     www.flaticon.com
+//   </a>
+// </div>
+
+var drillingMachine = new Image();
+drillingMachine.src = '/images/driller.png';
+
+drillingMachine.onload = function() {
+  console.log("Loadded");
+    ctx.drawImage(drillingMachine, 100, 100);
+};
+
+
+
 var seriesIndex = 0;
 const simulate = false;
 var last = {x:0.5, y:0.5};
