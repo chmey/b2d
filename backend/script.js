@@ -8,7 +8,7 @@ const recvMargin = 100;
 const recvRadius = 20;
 const recvColor = "blue";
 
-const toolRadius = 15;
+const toolRadius = 40;
 const toolColor = 'orange';
 const toolTrack = [
                     // idle in middle
@@ -53,9 +53,12 @@ const toolTrack = [
 var drillingMachine = new Image();
 drillingMachine.src = '/images/driller.png';
 
+let drillerLoaded = false;
+
 drillingMachine.onload = function() {
   console.log("Loadded");
-    ctx.drawImage(drillingMachine, 100, 100);
+  drillerLoaded = true;
+
 };
 
 
@@ -102,7 +105,14 @@ async function update() {
     }
     console.log("await: ", x, y);
 
-    drawDot((bw-recvMargin)*x + recvMargin, (bh-recvMargin)*y + recvMargin, toolRadius, toolColor);
+    const toolX = (bw-recvMargin)*x + recvMargin;
+    const toolY = (bh-recvMargin)*y + recvMargin;
+
+    if(drillerLoaded) {
+      ctx.drawImage(drillingMachine, toolX-toolRadius/2, toolY-toolRadius/2, toolRadius, toolRadius);
+    } else {
+      drawDot(toolX, toolY, toolRadius, toolColor);
+    }
   }
 
   setTimeout(update, 200);
