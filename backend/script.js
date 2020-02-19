@@ -47,6 +47,7 @@ const toolTrack = [
                   ]
 var seriesIndex = 0;
 const simulate = false;
+var last = {x:0.5,y:0.5};
 
 function drawDot(x, y, r, color) {
   ctx.beginPath();
@@ -79,6 +80,9 @@ async function update() {
     // );
   } else {
     let {x, y} = await (await fetch('/getToolPos?toolId=1.2')).json();
+    if (x && y){
+      last = {x,y};
+    }
     console.log("await: ", x, y);
 
     drawDot((bw-recvMargin)*x + recvMargin, (bh-recvMargin)*y + recvMargin, toolRadius, toolColor);

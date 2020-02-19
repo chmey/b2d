@@ -12,7 +12,7 @@ app.get('/getToolPos', async (req, res) => res.json(await getPos(req.query.toolI
 
 async function getPos(toolId) {
   let rssis = await influx.query(`SELECT median("rssi") FROM "b2dping" WHERE ("tool_id" = '1.2') AND time >= now() - 3s GROUP BY "recv_bd_addr"`);
-  rssis = rssis.sort((a, b) => {return a.recv_bd_addr - b.recv_bd_addr })
+  rssis.sort((a, b) => {return a.recv_bd_addr < b.recv_bd_addr })
 
   rssis = rssis.map(x => x.median);
   let loc = trilateration.trilat(rssis);
