@@ -18,9 +18,7 @@ async function getPos(toolId) {
   let rssis = await influx.query(`SELECT median("rssi") FROM "b2dping" WHERE ("tool_id" = '1.2') AND time >= now() - 1m GROUP BY "recv_bd_addr"`);
   let loc = trilateration.trilat(rssis);
 
-  // return loc;
-
-  return {x: 0, y: 1.5};
+  return loc;
 }
 
 const influx = new Influx.InfluxDB({
