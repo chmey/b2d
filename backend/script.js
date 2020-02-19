@@ -4,11 +4,11 @@ var ctx = canvas.getContext("2d");
 const bh = canvas.height;
 const bw = canvas.width;
 
-const recvMargin = 80;
+const recvMargin = 100;
 const recvRadius = 20;
 const recvColor = "blue";
 
-const toolRadius = 12;
+const toolRadius = 15;
 const toolColor = 'orange';
 const toolTrack = [
                     // idle in middle
