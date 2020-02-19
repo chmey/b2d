@@ -12,10 +12,8 @@ app.get('/getToolPos', async (req, res) => res.json(await getPos(req.query.toolI
 
 async function getPos(toolId) {
   console.log("getPos of",toolId);
-  // let query = `  SELECT MEDIAN("rssi") FROM "b2dping" WHERE ("tool_id" = ${Influx.escape.stringLit(toolId)}) AND time >= now() - 1m GROUP BY "recv_bd_addr"`
-  // console.log(query)
-
   let rssis = await influx.query(`SELECT median("rssi") FROM "b2dping" WHERE ("tool_id" = '1.2') AND time >= now() - 1m GROUP BY "recv_bd_addr"`);
+  rssis = rssis.map(x => x.median);
   let loc = trilateration.trilat(rssis);
 
   return loc;
