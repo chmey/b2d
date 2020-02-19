@@ -83,8 +83,9 @@ async function update() {
 
     drawDot((bw-recvMargin)*x + recvMargin, (bh-recvMargin)*y + recvMargin, toolRadius, toolColor);
   }
+
+  setTimout(update, 200);
 }
 
-
-setInterval(update, 350);
-// update();
+// setInterval(update, 350);
+update();
