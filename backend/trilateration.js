@@ -1,4 +1,8 @@
-function trilat([r1, r2, r3]) {
+function trilat([s1, s2, s3]) {
+  let [r1, r2, r3] = [s1, s2, s3].map(function(e) {
+    return (e / Math.min(s1, s2, s3));
+  });
+  console.log([r1,r2,r3])
   n1 = {x: 0, y: 0};
   n2 = {x: 1, y: 0};
   n3 = {x: 0.5, y: 1};
@@ -13,17 +17,5 @@ function trilat([r1, r2, r3]) {
 
   return {x, y}
   //https://en.wikipedia.org/wiki/True_range_multilateration#Three_Cartesian_dimensions,_three_measured_slant_ranges
-  // var px = ((s1 * s1)
-  //           - (s2 * s2)
-  //           + (this.node2.Left * this.node2.Left))
-  //          / ((double)(2 * this.node2.Left));
-  //
-  // var py = ((s1 * s1)
-  //           - (s3 * s3)
-  //           + (this.node3.Left * this.node3.Left)
-  //           + (this.node3.Top * this.node3.Top))
-  //          / (2 * this.node3.Top)
-  //          - (this.node3.Left / (double)this.node3.Top)
-  //          * px;
 };
 exports.trilat = trilat;
