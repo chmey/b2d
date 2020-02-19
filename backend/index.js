@@ -2,6 +2,7 @@ const WebSocket = require('ws');
 const Influx = require('influx');
 const http = require('http');
 const express = require('express');
+const trilateration = require('./trilateration');
 
 const app = express();
 
@@ -10,8 +11,15 @@ app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
 app.get('/getToolPos', (req, res) => res.json(getPos(req.query.toolId)));
 
 function getPos(toolId) {
-  console.log("getPos of", toolId);
-  return {x: 0.5, y: 0.3};
+  console.log("getPos of",toolId);
+  // let query = `  SELECT MEDIAN("rssi") FROM "b2dping" WHERE ("tool_id" = ${Influx.escape.stringLit(toolId)}) AND time >= now() - 1m GROUP BY "recv_bd_addr"`
+  // console.log(query)
+  return influx.query(`
+  SELECT median("rssi") FROM "b2dping" WHERE ("tool_id" = '1.2') AND time >= now() - 1m GROUP BY time(5s), "recv_bd_addr"
+  `)
+
+  medians = []
+  console.log("median of beacons:", medians);
 }
 
 const influx = new Influx.InfluxDB({
