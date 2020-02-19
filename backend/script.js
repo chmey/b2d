@@ -8,7 +8,7 @@ const recvMargin = 80;
 const recvRadius = 20;
 const recvColor = "blue";
 
-const toolRadius = 15;
+const toolRadius = 12;
 const toolColor = 'orange';
 const toolTrack = [
                     // idle in middle
@@ -81,7 +81,7 @@ async function update() {
     let {x, y} = await (await fetch('/getToolPos?toolId=1.2')).json();
     console.log("await: ", x, y);
 
-    drawDot(bw*x, bh*y, toolRadius, toolColor);
+    drawDot(bw*x + recvMargin, bh*y+recvMargin, toolRadius, toolColor);
   }
 }
 
