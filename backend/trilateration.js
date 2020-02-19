@@ -2,7 +2,6 @@ function trilat([s1, s2, s3]) {
   let [r1, r2, r3] = [s1, s2, s3].map(function(e) {
     return (e / Math.min(s1, s2, s3));
   });
-  console.log([r1,r2,r3])
   n1 = {x: 0, y: 0};
   n2 = {x: 1, y: 0};
   n3 = {x: 0.5, y: 1};
