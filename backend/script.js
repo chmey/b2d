@@ -46,7 +46,7 @@ const toolTrack = [
 
                   ]
 var seriesIndex = 0;
-const simulate = true;
+const simulate = false;
 
 function drawDot(x, y, r, color) {
   ctx.beginPath();
@@ -55,7 +55,7 @@ function drawDot(x, y, r, color) {
   ctx.fill();
 }
 
-function update() {
+async function update() {
   console.log("Update...");
   ctx.clearRect(0, 0, bw, bh);
 
@@ -72,12 +72,16 @@ function update() {
       toolRadius,
       toolColor
     );
+
     // drawDot(
       // Math.random() * (bw-recvMargin)+recvMargin,
       // Math.random() * (bh-recvMargin)+recvMargin, toolRadius, toolColor
     // );
   } else {
-    drawDot(400, 300, toolRadius, toolColor);
+    let {x, y} = await (await fetch('/getToolPos?toolId=1.2')).json();
+    // console.log("await: ", x, y);
+
+    drawDot(x, y, toolRadius, toolColor);
   }
 }
 
