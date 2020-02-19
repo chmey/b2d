@@ -8,18 +8,14 @@ const app = express();
 
 app.use(express.static(__dirname));
 app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
-app.get('/getToolPos', (req, res) => res.json(getPos(req.query.toolId)));
+app.get('/getToolPos', async (req, res) => res.json(await getPos(req.query.toolId)));
 
-function getPos(toolId) {
+async function getPos(toolId) {
   console.log("getPos of",toolId);
   // let query = `  SELECT MEDIAN("rssi") FROM "b2dping" WHERE ("tool_id" = ${Influx.escape.stringLit(toolId)}) AND time >= now() - 1m GROUP BY "recv_bd_addr"`
   // console.log(query)
-  return influx.query(`
-  SELECT median("rssi") FROM "b2dping" WHERE ("tool_id" = '1.2') AND time >= now() - 1m GROUP BY time(5s), "recv_bd_addr"
-  `)
+ return await influx.query(`SELECT median("rssi") FROM "b2dping" WHERE ("tool_id" = '1.2') AND time >= now() - 1m GROUP BY "recv_bd_addr"`)
 
-  medians = []
-  console.log("median of beacons:", medians);
 }
 
 const influx = new Influx.InfluxDB({
