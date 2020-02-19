@@ -11,7 +11,6 @@ app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
 app.get('/getToolPos', async (req, res) => res.json(await getPos(req.query.toolId)));
 
 async function getPos(toolId) {
-  console.log("getPos of",toolId);
   let rssis = await influx.query(`SELECT median("rssi") FROM "b2dping" WHERE ("tool_id" = '1.2') AND time >= now() - 1m GROUP BY "recv_bd_addr"`);
   rssis = rssis.map(x => x.median);
   let loc = trilateration.trilat(rssis);
@@ -40,8 +39,6 @@ const influx = new Influx.InfluxDB({
 });
 
 influx.createDatabase('b2dth_db');
-
-// SELECT signal_strength FROM b2dping WHERE receiver_bd_addr='XXX' AND time >= 'XXX' AND time <= 'XXX'
 
 const server = http.createServer(app);
 const wss = new WebSocket.Server({server: server})
