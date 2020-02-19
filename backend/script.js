@@ -8,7 +8,7 @@ const recvMargin = 100;
 const recvRadius = 20;
 const recvColor = "blue";
 
-const toolRadius = 40;
+const toolRadius = 60;
 const toolColor = 'orange';
 const toolTrack = [
                     // idle in middle
